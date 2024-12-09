@@ -137,7 +137,7 @@ function App() {
 
       <section className="w-full max-w-7xl mx-auto my-10">
         <Popup currentState={isModalOpen ? "block" : "hidden"} currentSongs={currentSongs} onClose={handleClose} refreshComment={getComments}/>
-        <div className="bg-slate-50 p-4 mx-5 rounded-lg items-center justify-center">
+        <div className="bg-slate-100 p-4 mx-5 rounded-lg items-center justify-center">
           <div className="flex justify-end">
             <button onClick={handleOpen} className={`rounded-lg p-4 bg-black text-white font-bold ${formatDateUTC(currentDate) != todayDate ? "hidden" : "block"}`}> Add comment</button>
           </div>
@@ -145,9 +145,11 @@ function App() {
             <LoadingSVG />
           </div>
           <div className={`${isLoading ? "hidden" : "block"}`}>
-            {currentComments.map((comment, index) => (
-              <Comment key={index} name={comment.username} commentText={comment.comment} isVerified={comment.isVerified} />
-            ))}
+            <div className="h-96 overflow-y-auto">
+              {currentComments.map((comment, index) => (
+                <Comment key={index} name={comment.username} commentText={comment.comment} isVerified={comment.isVerified} />
+              ))}
+            </div>
           </div>
         </div>
       </section>

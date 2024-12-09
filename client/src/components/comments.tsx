@@ -18,7 +18,7 @@ const Comment = ({ name, commentText, isVerified}: commentProps) => {
           <VerifySVG />
         </div>
       </div>
-      <div className="bg-slate-100 p-2 mt-1 rounded-lg">
+      <div className="bg-slate-200 p-2 mt-1 rounded-lg">
         <p>{commentText}</p>
       </div>
     </div>
