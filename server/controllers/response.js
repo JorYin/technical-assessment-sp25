@@ -86,6 +86,21 @@ const pushComment = async (req, res) => {
       {$project: {_id: 0, username: "$_id", num_comments: 1}}
     ])
 
+    const totalCommentsToday = await dailyEntry.aggregate([
+      { $match: {date: todayDate}},
+      { $unwind: "$comments" }, 
+      { $match: { "comments.username": currentUser } }, 
+      {
+        $group: {
+          _id: "$comments.username", 
+          num_comments: { $sum: 1 },
+        },
+      },
+      {$project: {_id: 0, username: "$_id", num_comments: 1}}
+    ])
+
+    const hasCommentedToday = totalCommentsToday.length > 0;
+
     if (totalComments.length > 0 && totalComments[0].num_comments >= 2){
       currentDoc.comments.push({
         username: currentUser,
@@ -93,7 +108,7 @@ const pushComment = async (req, res) => {
         isVerified: true,
         hasVoted: true
       })
-
+      
       await dailyEntry.updateMany(
         { "comments.username": currentUser },
         { $set: { "comments.$[elem].isVerified": true } },
@@ -107,7 +122,7 @@ const pushComment = async (req, res) => {
         isVerified: false,
         hasVoted: true
       })
-      if (totalComments[0].num_comments == 0){
+      if (!hasCommentedToday){
         const song = currentDoc.songs.find((song) => song.name === songChoice);
 
         song.votes += 1;

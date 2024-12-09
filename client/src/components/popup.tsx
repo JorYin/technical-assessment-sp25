@@ -44,7 +44,6 @@ const Popup = ({currentState, onClose, currentSongs, refreshComment} : PopupProp
     }
     
     try {
-      console.log("here")
       await axios.post('http://localhost:3000/api/currentDate/comment', {
         username: userNameText,
         comment: commentText,

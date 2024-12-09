@@ -89,7 +89,6 @@ function App() {
       const dataResponse = await axios.get(`http://localhost:3000/api/refresh/comments`);
       const { comments }: { comments: Array<Comments> } = dataResponse.data;
       setComments(comments);
-      console.log(comments);
       setLoading(false)
     } catch (error) {
       

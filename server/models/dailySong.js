@@ -24,11 +24,7 @@ const dailySong = new mongoose.Schema (
         hasVoted: {type: Boolean, required: true}
       }
     ],
-    winnerToday: {
-      type: Boolean,
-      default: false,
-      required: true
-    }
+    winnerToday: { type: String, default: "", required: false }
   }
 );
 
