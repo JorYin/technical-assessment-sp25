@@ -2,19 +2,20 @@ import { useState, ChangeEvent, useEffect } from 'react';
 import axios from 'axios';
 
 interface Songs {
-  name: string;
-  artist: string;
-  link: string;
-  imageLink: string;
+  name: string,
+  artist: string,
+  link: string,
+  imageLink: string
 }
 
 interface PopupProps {
   currentState: string,
   currentSongs: Array<Songs>,
-  onClose: () => void
+  onClose: () => void,
+  refreshComment: () => void
 }
 
-const Popup = ({currentState, onClose, currentSongs} : PopupProps) => {
+const Popup = ({currentState, onClose, currentSongs, refreshComment} : PopupProps) => {
   const [userNameText, setUserNameText] = useState('');
   const [commentText, setCommentText] = useState('');
   const [songChoiceText, setSongChoiceText] = useState('');
@@ -34,34 +35,29 @@ const Popup = ({currentState, onClose, currentSongs} : PopupProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    if (!userNameText || !commentText || !songChoiceText) {
-      alert("Please fill out all fields before submitting!");
+    if (!userNameText) {
+      alert("Please fill out all username");
+      return;
+    } else if (!commentText){
+      alert("Please fill out all comment");
       return;
     }
-
-    onClose();
-    setUserNameText("");
-    setCommentText("");
-    console.log(songChoiceText);
-    /*
+    
     try {
-      await axios.post('http://localhost:3000/api/comments', {
+      console.log("here")
+      await axios.post('http://localhost:3000/api/currentDate/comment', {
         username: userNameText,
         comment: commentText,
-        song: songChoiceText,
+        songChoice: songChoiceText,
       });
 
-      // Clear the form fields
-      setUserNameText('');
-      setCommentText('');
-      setSongChoiceText(currentSongs[0]?.name || '');
-
-      // Refresh the data in the parent component
-      onClose(); // Close the popup
+      onClose();
+      refreshComment();
+      setUserNameText("");
+      setCommentText("");
     } catch (error) {
       console.error("Error submitting comment and vote:", error);
     }
-    */
   };
 
   useEffect(() => {
@@ -99,7 +95,7 @@ const Popup = ({currentState, onClose, currentSongs} : PopupProps) => {
               </select>
             </div>
 
-            <button className="bg-black px-4 py-2 mt-5 rounded-lg text-white text-xl font-bold">Done</button>
+            <button className="bg-black px-4 py-2 mt-5 rounded-lg text-white text-xl font-bold" type="submit">Done</button>
           </form>
         </div>
       </div>

@@ -7,15 +7,16 @@ import Popup from "./components/popup"
 import LoadingSVG from "./components/loadingSVG";
 
 interface Songs {
-  name: string;
-  artist: string;
-  link: string;
-  imageLink: string;
+  name: string,
+  artist: string,
+  link: string,
+  imageLink: string
 }
 
 interface Comments {
-  name: string;
-  commentText: string;
+  username: string,
+  comment: string,
+  isVerified: Boolean
 }
 
 function App() {
@@ -81,6 +82,19 @@ function App() {
     }
   }
 
+  const getComments = async () => {
+    setLoading(true)
+    try {
+      const dataResponse = await axios.get(`http://localhost:3000/api/refresh/comments`);
+      const { comments }: { comments: Array<Comments> } = dataResponse.data;
+      setComments(comments);
+      console.log(comments);
+      setLoading(false)
+    } catch (error) {
+      
+    }
+  }
+
   useEffect(() => {
     getCurrentDate();
   }, [currentDate])
@@ -113,13 +127,18 @@ function App() {
       </section>
 
       <section className="w-full max-w-7xl mx-auto my-10">
-        <Popup currentState={isModalOpen ? "block" : "hidden"} currentSongs={currentSongs} onClose={handleClose}/>
-        <div className="bg-slate-50 p-4 mx-5 rounded-lg">
+        <Popup currentState={isModalOpen ? "block" : "hidden"} currentSongs={currentSongs} onClose={handleClose} refreshComment={getComments}/>
+        <div className="bg-slate-50 p-4 mx-5 rounded-lg items-center justify-center">
           <div className="flex justify-end">
             <button onClick={handleOpen} className={`rounded-lg p-4 bg-black text-white font-bold ${formatDateUTC(currentDate) != todayDate ? "hidden" : "block"}`}> Add comment</button>
           </div>
-          <div>
-            <Comment name="Blue" commentText="I love this song"/>
+          <div className={`flex justify-center items-center mt-10 ${isLoading ? "block" : "hidden"}`}>
+            <LoadingSVG />
+          </div>
+          <div className={`${isLoading ? "hidden" : "block"}`}>
+            {currentComments.map((comment, index) => (
+              <Comment key={index} name={comment.username} commentText={comment.comment} isVerified={comment.isVerified} />
+            ))}
           </div>
         </div>
       </section>

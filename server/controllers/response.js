@@ -68,12 +68,65 @@ const pushComment = async (req, res) => {
   try {
     const todayDate = new Date().toISOString().split("T")[0];
 
-    const currentDoc = await dailyEntry.findOne({ date: currentDate })
+    const currentDoc = await dailyEntry.findOne({ date: todayDate })
 
-    const username = req.body.username;
-    const comment = req.body.comment;
+    const currentUser = req.body.username;
+    const currentComment = req.body.comment;
     const songChoice = req.body.songChoice;
 
+    const totalComments = await dailyEntry.aggregate([
+      { $unwind: "$comments" }, 
+      { $match: { "comments.username": currentUser } }, 
+      {
+        $group: {
+          _id: "$comments.username", 
+          num_comments: { $sum: 1 },
+        },
+      },
+      {$project: {_id: 0, username: "$_id", num_comments: 1}}
+    ])
+
+    if (totalComments.length > 0 && totalComments[0].num_comments >= 2){
+      currentDoc.comments.push({
+        username: currentUser,
+        comment: currentComment,
+        isVerified: true,
+        hasVoted: true
+      })
+
+      await dailyEntry.updateMany(
+        { "comments.username": currentUser },
+        { $set: { "comments.$[elem].isVerified": true } },
+        { arrayFilters: [{ "elem.username": currentUser }] }
+      );
+
+    } else {
+      currentDoc.comments.push({
+        username: currentUser,
+        comment: currentComment,
+        isVerified: false,
+        hasVoted: true
+      })
+    }
+
+    const song = currentDoc.songs.find((song) => song.name === songChoice);
+
+    song.votes += 1;
+    await currentDoc.save();
+
+    res.status(200).json("done");
+  } catch (error) {
+    
+  }
+}
+
+const refreshComment = async (req, res) => {
+  try {
+    const todayDate = new Date().toISOString().split("T")[0];
+
+    const currentDoc = await dailyEntry.findOne({ date: todayDate })
+
+    res.status(200).json(currentDoc);
   } catch (error) {
     
   }
@@ -115,4 +168,4 @@ const fetchThreeSongs = async () => {
   return songs;
 }
 
-export { getCurrentEntry, pushComment};
+export { getCurrentEntry, pushComment, refreshComment};
