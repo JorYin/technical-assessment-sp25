@@ -9,6 +9,9 @@ import userRouter from "./routes/userRouter.js"
 dotenv.config();
 
 const app = express();
+
+app.set('trust proxy', 1);
+
 app.use(express.json());
 app.use(cors({
   origin: "https://technical-assessment-sp25.vercel.app",
