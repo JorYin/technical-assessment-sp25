@@ -6,6 +6,7 @@ dotenv.config();
 /* 
   This function will fetch the current day the user specifies. Since we fetch this function when the application loads
   we will create a new entry in out mongoDB collection if there is not already one for the current day as well.
+  Will also finalize the previous day winner since we should do it on the initial load of the website.
 */
 const getCurrentEntry = async (req, res) => {
   try {
@@ -24,7 +25,7 @@ const getCurrentEntry = async (req, res) => {
     /* 
       This statement will create the current day object in the mongoDB collection, otherwise if we query like
       the day before and there is no object in the collection we should send a 404 to the frontend since there was no
-      doc created for that day
+      doc created for that day.
     */
     if (currentDoc === null){
       if (currentDate === todayDate){
@@ -70,6 +71,10 @@ const getCurrentEntry = async (req, res) => {
   }
 }
 
+/* 
+  This function will create a comment based on the current day while also determining if they are verified.
+  Then if they have also already voted their song choice will not count multiple times.
+*/
 const pushComment = async (req, res) => {
   try {
     const todayDate = new Date().toISOString().split("T")[0];
@@ -143,6 +148,9 @@ const pushComment = async (req, res) => {
   }
 }
 
+/*
+  fetches the current day and sends it back to be able to access the current comments
+*/
 const refreshComment = async (req, res) => {
   try {
     const todayDate = new Date().toISOString().split("T")[0];
@@ -191,6 +199,9 @@ const fetchThreeSongs = async () => {
   return songs;
 }
 
+/*
+  Used to finalize the previous day winner based on the number of votes.
+*/
 const finalizePreviousDayWinner = async (previousDate) => {
   try {
     const previousDoc = await dailyEntry.findOne({ date: previousDate });
