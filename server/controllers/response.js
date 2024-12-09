@@ -15,6 +15,12 @@ const getCurrentEntry = async (req, res) => {
 
     const currentDoc = await dailyEntry.findOne({ date: currentDate })
 
+    const previousDate = new Date(currentDate);
+    previousDate.setUTCDate(previousDate.getUTCDate() - 1);
+    const previousDateString = previousDate.toISOString().split("T")[0];
+
+    finalizePreviousDayWinner(previousDateString);
+
     /* 
       This statement will create the current day object in the mongoDB collection, otherwise if we query like
       the day before and there is no object in the collection we should send a 404 to the frontend since there was no
@@ -184,5 +190,39 @@ const fetchThreeSongs = async () => {
 
   return songs;
 }
+
+const finalizePreviousDayWinner = async (previousDate) => {
+  try {
+    const previousDoc = await dailyEntry.findOne({ date: previousDate });
+
+    if (!previousDoc) {
+      console.log(`No entry found for ${previousDate}.`);
+      return;
+    }
+
+    if (previousDoc.winnerToday) {
+      console.log(`Winner for ${previousDate} is already finalized.`);
+      return;
+    }
+
+    const songsArray = previousDoc.songs;
+    let songName = "";
+    let highestVotes = -1;
+
+    for(let i = 0; i < songsArray.length; i++){
+      if(songsArray[i].votes > highestVotes){
+        songName = songsArray[i].name;
+        highestVotes = songsArray[i].votes;
+      }
+    }
+
+    previousDoc.winnerToday = songName
+    await previousDoc.save();
+
+    console.log(`Winner finalized for ${previousDate}: ${songName}`);
+  } catch (error) {
+    console.error("Error finalizing previous day's winner:", error);
+  }
+};
 
 export { getCurrentEntry, pushComment, refreshComment};
