@@ -12,6 +12,12 @@ const app = express();
 
 app.set('trust proxy', 1);
 
+app.use((req, res, next) => {
+  console.log('Request Origin:', req.headers.origin);
+  console.log('Request Method:', req.method);
+  next();
+});
+
 app.use(cors({
   origin: "https://technical-assessment-sp25.vercel.app",
   methods: ["POST", "PUT", "GET", "DELETE"],
