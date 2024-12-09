@@ -60,7 +60,7 @@ function App() {
     setLoading(true)
     const currentDateCalled = formatDateUTC(currentDate);
     try {
-      const dataResponse = await axios.get(`http://localhost:3000/api/currentDate/${currentDateCalled}`);
+      const dataResponse = await axios.get(`https://songs-2b0cfb95d5c2.herokuapp.com/api/currentDate/${currentDateCalled}`);
       const { songs, comments, winnerToday}: { songs: Array<Songs>, comments: Array<Comments>, winnerToday: String } = dataResponse.data;
 
       setSongs(songs);
@@ -79,7 +79,7 @@ function App() {
     prevDate.setUTCDate(prevDate.getUTCDate() - 1);
     const currentDateCalled = formatDateUTC(prevDate);
     try {
-      await axios.get(`http://localhost:3000/api/currentDate/${currentDateCalled}`);
+      await axios.get(`https://songs-2b0cfb95d5c2.herokuapp.com/api/currentDate/${currentDateCalled}`);
       setShowPreviousButton(true);
     } catch (error) {
       setShowPreviousButton(false);
@@ -89,7 +89,7 @@ function App() {
   const getComments = async () => {
     setLoading(true)
     try {
-      const dataResponse = await axios.get(`http://localhost:3000/api/refresh/comments`);
+      const dataResponse = await axios.get(`https://songs-2b0cfb95d5c2.herokuapp.com/api/refresh/comments`);
       const { comments }: { comments: Array<Comments> } = dataResponse.data;
       setComments(comments);
       setLoading(false)

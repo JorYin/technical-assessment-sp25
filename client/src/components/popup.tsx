@@ -44,7 +44,7 @@ const Popup = ({currentState, onClose, currentSongs, refreshComment} : PopupProp
     }
     
     try {
-      await axios.post('http://localhost:3000/api/currentDate/comment', {
+      await axios.post('https://songs-2b0cfb95d5c2.herokuapp.com/api/currentDate/comment', {
         username: userNameText,
         comment: commentText,
         songChoice: songChoiceText,
