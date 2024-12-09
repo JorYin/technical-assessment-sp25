@@ -70,9 +70,11 @@ const Popup = ({currentState, onClose, currentSongs, refreshComment} : PopupProp
         <div className="w-full max-w-xl">
           <form className="bg-white items-center justify-center shadow-md rounded px-8 pt-6 pb-8 mx-5" onSubmit={handleSubmit}>
             <div className="flex justify-end" onClick={onClose}>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
-              </svg>
+              <div className="cursor-pointer p-2 bg-slate-100 rounded-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="size-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                </svg>
+              </div>
             </div>
             <div className="">
               <p className="text-xl font-bold">Username</p>

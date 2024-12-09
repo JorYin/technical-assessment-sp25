@@ -24,12 +24,13 @@ function App() {
 
   const todayDate = new Date().toISOString().split("T")[0];
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setLoading] = useState(false);
-  const [showPreviousButton, setShowPreviousButton] = useState(true);
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [isModalOpen, setIsModalOpen] = useState<Boolean>(false);
+  const [isLoading, setLoading] = useState<Boolean>(false);
+  const [showPreviousButton, setShowPreviousButton] = useState<Boolean>(true);
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [currentSongs, setSongs] = useState<Array<Songs>>([]);
   const [currentComments, setComments] = useState<Array<Comments>>([]);
+  const [todayWinner, setWinner] = useState<String>("");
 
   const formatDateUTC = (date: Date) => {
     return date.toISOString().split('T')[0];
@@ -60,9 +61,11 @@ function App() {
     const currentDateCalled = formatDateUTC(currentDate);
     try {
       const dataResponse = await axios.get(`http://localhost:3000/api/currentDate/${currentDateCalled}`);
-      const { songs, comments }: { songs: Array<Songs>; comments: Array<Comments> } = dataResponse.data;
+      const { songs, comments, winnerToday}: { songs: Array<Songs>, comments: Array<Comments>, winnerToday: String } = dataResponse.data;
+
       setSongs(songs);
       setComments(comments);
+      setWinner(winnerToday);
 
       await getDateBefore();
       setLoading(false)
@@ -117,6 +120,12 @@ function App() {
             <button className={`rounded-lg px-4 py-2 bg-black text-white font-bold ${todayDate === formatDateUTC(currentDate) ? "hidden" : "block"} `} onClick={nextDate}>Next</button>
         </div>
       </div>
+
+      <section className="w-full max-w-7xl mx-auto my-10">
+        <div className="mx-5 text-center">
+          {todayWinner.length > 0 ? <h1 className="text-3xl font-bold">Winner: {todayWinner}</h1> : <h1 className="text-3xl font-bold">Winner: Unknown</h1>}
+        </div>
+      </section>
 
       <section className="w-full max-w-7xl mx-auto my-10">
         <div className="mx-5 grid grid-cols-1 lg:grid-cols-3 gap-8 place-items-center">
