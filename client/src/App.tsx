@@ -10,7 +10,8 @@ interface Songs {
   name: string,
   artist: string,
   link: string,
-  imageLink: string
+  imageLink: string,
+  votes: number
 }
 
 interface Comments {

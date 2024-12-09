@@ -107,11 +107,13 @@ const pushComment = async (req, res) => {
         isVerified: false,
         hasVoted: true
       })
+      if (totalComments[0].num_comments == 0){
+        const song = currentDoc.songs.find((song) => song.name === songChoice);
+
+        song.votes += 1;
+      }
     }
 
-    const song = currentDoc.songs.find((song) => song.name === songChoice);
-
-    song.votes += 1;
     await currentDoc.save();
 
     res.status(200).json("done");
